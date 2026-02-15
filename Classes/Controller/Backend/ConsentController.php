@@ -7,19 +7,25 @@ namespace OliverKroener\OkCookiebotCookieConsent\Controller\Backend;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Attribute\AsController;
+use TYPO3\CMS\Backend\CodeEditor\CodeEditor;
+use TYPO3\CMS\Backend\CodeEditor\Registry\ModeRegistry;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
+use TYPO3\CMS\Backend\Template\Components\ButtonBar;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Http\RedirectResponse;
+use TYPO3\CMS\Core\Imaging\IconFactory;
+use TYPO3\CMS\Core\Imaging\IconSize;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Type\Bitmask\Permission;
 use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
+use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 #[AsController]
@@ -30,6 +36,10 @@ class ConsentController
         private readonly SiteFinder $siteFinder,
         private readonly ConnectionPool $connectionPool,
         private readonly UriBuilder $uriBuilder,
+        private readonly CodeEditor $codeEditor,
+        private readonly ModeRegistry $modeRegistry,
+        private readonly PageRenderer $pageRenderer,
+        private readonly IconFactory $iconFactory,
     ) {}
 
     public function indexAction(ServerRequestInterface $request): ResponseInterface
@@ -78,10 +88,50 @@ class ConsentController
             ['id' => $id]
         );
 
+        // Register CodeMirror editor with HTML mode
+        $this->codeEditor->registerConfiguration();
+        $this->pageRenderer->loadJavaScriptModule('@typo3/backend/code-editor/element/code-mirror-element.js');
+        $htmlMode = $this->modeRegistry->getByFormatCode('html');
+        $codeMirrorMode = GeneralUtility::jsonEncodeForHtmlAttribute($htmlMode->getModule(), false);
+
+        // Add save button to DocHeader
+        $buttonBar = $view->getDocHeaderComponent()->getButtonBar();
+        $saveButton = $buttonBar->makeInputButton()
+            ->setName('_savedok')
+            ->setValue('1')
+            ->setForm('CookiebotSettingsForm')
+            ->setIcon($this->iconFactory->getIcon('actions-document-save', IconSize::SMALL))
+            ->setTitle($languageService->sL('LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:save'))
+            ->setShowLabelText(true);
+        $buttonBar->addButton($saveButton, ButtonBar::BUTTON_POSITION_LEFT, 2);
+
+        // Unsaved-changes detection with discard/save/return modal dialog
+        $this->pageRenderer->loadJavaScriptModule(
+            '@oliverkroener/ok-cookiebot/backend/form-dirty-check.js'
+        );
+        $this->pageRenderer->addInlineLanguageLabelArray([
+            'label.confirm.close_without_save.title' => $languageService->sL(
+                'LLL:EXT:backend/Resources/Private/Language/locallang_alt_doc.xlf:label.confirm.close_without_save.title'
+            ),
+            'label.confirm.close_without_save.content' => $languageService->sL(
+                'LLL:EXT:backend/Resources/Private/Language/locallang_alt_doc.xlf:label.confirm.close_without_save.content'
+            ),
+            'buttons.confirm.close_without_save.yes' => $languageService->sL(
+                'LLL:EXT:backend/Resources/Private/Language/locallang_alt_doc.xlf:buttons.confirm.close_without_save.yes'
+            ),
+            'buttons.confirm.close_without_save.no' => $languageService->sL(
+                'LLL:EXT:backend/Resources/Private/Language/locallang_alt_doc.xlf:buttons.confirm.close_without_save.no'
+            ),
+            'buttons.confirm.save_and_close' => $languageService->sL(
+                'LLL:EXT:backend/Resources/Private/Language/locallang_alt_doc.xlf:buttons.confirm.save_and_close'
+            ),
+        ]);
+
         $view->assignMultiple([
             'tx_ok_cookiebot_banner_script' => $scripts['tx_ok_cookiebot_banner_script'] ?? '',
             'tx_ok_cookiebot_declaration_script' => $scripts['tx_ok_cookiebot_declaration_script'] ?? '',
             'saveUrl' => $saveUrl,
+            'codeMirrorMode' => $codeMirrorMode,
         ]);
 
         return $view->renderResponse('Backend/Consent/Index');

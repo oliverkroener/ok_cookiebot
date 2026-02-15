@@ -6,3 +6,6 @@ services:
 
   OliverKroener\OkCookiebotCookieConsent\:
     resource: '../Classes/*'
+
+  OliverKroener\OkCookiebotCookieConsent\Rendering\CookiebotScriptRenderer:
+    public: true

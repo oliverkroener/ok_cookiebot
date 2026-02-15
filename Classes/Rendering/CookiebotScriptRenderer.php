@@ -11,12 +11,17 @@ use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 class CookiebotScriptRenderer
 {
-    public ContentObjectRenderer $cObj;
+    private ContentObjectRenderer $cObj;
 
     public function __construct(
         private readonly SiteFinder $siteFinder,
         private readonly ConnectionPool $connectionPool,
     ) {}
+
+    public function setContentObjectRenderer(ContentObjectRenderer $cObj): void
+    {
+        $this->cObj = $cObj;
+    }
 
     /**
      * Retrieves the specified script from the active sys_template.

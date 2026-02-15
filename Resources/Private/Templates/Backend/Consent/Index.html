@@ -27,38 +27,39 @@
             </div>
         </f:else>
         <f:else>
-            <f:flashMessages />
+            <f:flashMessages queueIdentifier="core.template.flashMessages" />
             <h1 class="mt-4">
                 <f:translate key="form.header.cookie_consent_script" extensionName="ok_cookiebot" />
             </h1>
-            <form action="{saveUrl}" method="post" class="mt-3">
-                <div class="form-group mb-3">
-                    <label for="tx_ok_cookiebot_banner_script">
+            <form action="{saveUrl}" method="post" id="CookiebotSettingsForm" class="mt-3">
+                <div class="form-group mb-4">
+                    <label for="tx_ok_cookiebot_banner_script" class="form-label">
                         <f:translate key="form.label.banner_script" extensionName="ok_cookiebot" />
                     </label>
-                    <textarea
-                        id="tx_ok_cookiebot_banner_script"
-                        name="tx_ok_cookiebot_banner_script"
-                        rows="10"
-                        cols="80"
-                        placeholder="{f:translate(key:'form.placeholder.javascript_code', extensionName:'ok_cookiebot')}"
-                        class="form-control font-monospace"
-                    >{tx_ok_cookiebot_banner_script}</textarea>
+                    <typo3-t3editor-codemirror mode="{codeMirrorMode}" nolazyload="true">
+                        <textarea
+                            id="tx_ok_cookiebot_banner_script"
+                            name="tx_ok_cookiebot_banner_script"
+                            rows="10"
+                            class="form-control font-monospace"
+                        >{tx_ok_cookiebot_banner_script}</textarea>
+                    </typo3-t3editor-codemirror>
                 </div>
-                <div class="form-group mb-3">
-                    <label for="tx_ok_cookiebot_declaration_script">
+                <div class="form-group mb-4">
+                    <label for="tx_ok_cookiebot_declaration_script" class="form-label">
                         <f:translate key="form.label.declaration_script" extensionName="ok_cookiebot" />
                     </label>
-                    <textarea
-                        id="tx_ok_cookiebot_declaration_script"
-                        name="tx_ok_cookiebot_declaration_script"
-                        rows="10"
-                        cols="80"
-                        placeholder="{f:translate(key:'form.placeholder.javascript_code', extensionName:'ok_cookiebot')}"
-                        class="form-control font-monospace"
-                    >{tx_ok_cookiebot_declaration_script}</textarea>
+                    <typo3-t3editor-codemirror mode="{codeMirrorMode}" nolazyload="true">
+                        <textarea
+                            id="tx_ok_cookiebot_declaration_script"
+                            name="tx_ok_cookiebot_declaration_script"
+                            rows="10"
+                            class="form-control font-monospace"
+                        >{tx_ok_cookiebot_declaration_script}</textarea>
+                    </typo3-t3editor-codemirror>
                 </div>
-                <button type="submit" class="btn btn-success mt-2">
+                <button type="submit" class="btn btn-primary mt-2">
+                    <core:icon identifier="actions-document-save" size="small" />
                     <f:translate key="form.button.save" extensionName="ok_cookiebot" />
                 </button>
             </form>
