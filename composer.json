@@ -3,7 +3,7 @@
     "type": "typo3-cms-extension",
     "description": "Provides a backend module to manage privacy cookie consent scripts for Cookiebot.",
     "license": "GPL-2.0-or-later",
-    "version": "1.0.0",
+    "version": "3.0.0",
     "keywords": [
         "typo3",
         "typo3-extension",
