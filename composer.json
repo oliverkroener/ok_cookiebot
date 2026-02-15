@@ -2,7 +2,18 @@
     "name": "oliverkroener/ok-cookiebot",
     "type": "typo3-cms-extension",
     "description": "Provides a backend module to manage privacy cookie consent scripts for Cookiebot.",
-    "version": "0.9.0",
+    "license": "GPL-2.0-or-later",
+    "version": "1.0.0",
+    "keywords": [
+        "typo3",
+        "typo3-extension",
+        "cookiebot",
+        "cookie-consent",
+        "gdpr",
+        "privacy",
+        "backend-module",
+        "consent-management"
+    ],
     "authors": [
         {
             "name": "Oliver Kroener",
@@ -11,8 +22,8 @@
         }
     ],
     "require": {
-        "typo3/cms-core": "^11.5",
-        "oliverkroener/ok-typo3-helper": "^3"
+        "typo3/cms-core": "^12.4 || ^13.4 || ^14.0",
+        "typo3/cms-backend": "^12.4 || ^13.4 || ^14.0"
     },
     "autoload": {
         "psr-4": {
@@ -24,5 +35,4 @@
             "extension-key": "ok_cookiebot"
         }
     }
-
 }

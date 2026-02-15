@@ -1,27 +1,27 @@
 # Define a USER object to fetch and render the banner script using a custom PHP function
 lib.cookiebotHeadScript = USER
 lib.cookiebotHeadScript {
-    userFunc = OliverKroener\OkCookiebotCookieConsent\Controller\ConsentController->renderBannerScript
+    userFunc = OliverKroener\OkCookiebotCookieConsent\Rendering\CookiebotScriptRenderer->renderBannerScript
     type = head
     stdWrap.trim = 1
 }
 
 
-# Define a CONTENT object to fetch the footer script from the current site's root sys_template
-lib.cookiebotBodyScript = CONTENT
+# Define a USER object to fetch the footer script from the current site's root sys_template
+lib.cookiebotBodyScript = USER
 lib.cookiebotBodyScript {
-    userFunc = OliverKroener\OkCookiebotCookieConsent\Controller\ConsentController->renderBannerScript
+    userFunc = OliverKroener\OkCookiebotCookieConsent\Rendering\CookiebotScriptRenderer->renderBannerScript
     type = body
     stdWrap.trim = 1
 }
 
 # Insert the head script into <head> if not empty
+# Using crc32 of 'ok_cookiebot' (261487170) to avoid conflicts
 page.headerData {
-    1 < lib.cookiebotHeadScript
+    261487170 < lib.cookiebotHeadScript
 }
 
 # Insert the footer script before </body> if not empty
 page.footerData {
-    9999 < lib.cookiebotBodyScript
+    261487170 < lib.cookiebotBodyScript
 }
-

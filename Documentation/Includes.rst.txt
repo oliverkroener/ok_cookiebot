@@ -1,0 +1,4 @@
+..  This is included by all .rst files in this extension's documentation
+
+..  |extension_key| replace:: ok_cookiebot
+..  |extension_name| replace:: Cookiebot Cookie Consent
